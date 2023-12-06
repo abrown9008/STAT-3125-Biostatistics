@@ -1,0 +1,70 @@
+---
+title: "One Quantitative Variable Analysis Lecture Workbook"
+format: html
+editor: visual
+---
+
+# Specify the Elements of the Research Question
+
+1.  Population of Interest\
+2.  Variable of Interest\
+3.  Characteristic of the Variable to be Analyzed\
+4.  General Analytical Method
+
+# Specify the Research Hypothesis
+
+5.  The Research Hypothesis is:
+
+# Specify the Statistical Hypotheses
+
+6.  $H_A$:
+7.  $H_0$:
+
+# Descriptive Evidence Gathering Techniques
+
+8.  Calculate the Sample Mean
+
+    ```{r}
+    ## Step 1: Read in the Data ##
+
+    tiktok <- readxl::read_xlsx("TikTok Usage.xlsx")
+
+    ## Step 2a: Calculate the Sample Mean ##
+
+    mean(tiktok$`Daily Time`)
+
+    ```
+
+9.  Calculate the Sample Median
+
+    ```{r}
+    ## Step 2b: Calculate Sample Median ##
+
+    median(tiktok$`Daily Time`)
+    ```
+
+10. Do these two values provide support for the research hypothesis?\
+
+11. Calculate the sample standard deviation
+
+```{r}
+## Step 3: Calculate Sample Standard Deviation ##
+
+sd(tiktok$`Daily Time`)
+```
+
+12. Provide an interpretation of the sample standard deviation\
+
+13. Calculate Q1 and Q3
+
+    ```{r}
+    ## Step 4: Calculate Q1 & Q3 ##
+
+    quantile(tiktok$`Daily Time`,probs=c(0.25,0.75))
+    ```
+
+14. Do Q1 and Q3 provide support for the research hypothesis?\
+
+15. Calculate the appropriate test statistic and its associated p-value
+
+16. 

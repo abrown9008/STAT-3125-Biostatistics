@@ -1,0 +1,227 @@
+---
+title: "Inferential Techniques for Studies Involving One Quantitative Variable"
+author: "Dr. Austin Brown"
+institute: "Kennesaw State University"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T,include=T,warning=F,message=F,tidy=F)
+```
+```{r,echo=F}
+tiktok <- readxl::read_xlsx("TikTok Usage.xlsx")
+```
+
+## Introduction
+
+- In the last class, we learned about descriptive evidence gathering techniques we can use to help answer research questions involving a single quantitative variable.
+    - The TikTok example!
+    
+\vskip 0.10 in
+
+- Now, while these descriptive techniques are useful and important, they comprise just one component of our evidence gathering arsenal. 
+
+\vskip 0.10 in
+
+- The other set of techniques we typically employ in answering research questions of any kind are called \textbf{\underline{inferential techniques}}.
+    - These involve hypothesis tests (which we discussed in general previously) as well as \textbf{\underline{confidence intervals}}.
+    
+## Inferential Evidence Gathering Techniques: Hypothesis Tests
+
+- We discussed in a prior lecture that all hypothesis tests have the same key components:
+    1. A null and alternative hypothesis ($H_0$ and $H_A$)
+    2. A test statistic
+    3. A p-value associated with the test statistic
+    
+\vskip 0.10 in
+
+- Recall that the general form for any test statistic is:
+
+\footnotesize
+$$ \frac{(\text{What we observed in the data}) - (\text{What we'd expect to observe if $H_0$ were true})}{\text{Standardizing Constant}} $$
+\normalsize
+
+## Inferential Evidence Gathering Techniques: Hypothesis Tests
+
+- In the last lecture, we had said that our statistical hypotheses for the TikTok example were:
+
+$$ H_A: \mu > 3 $$
+$$ H_0: \mu \leq 3 $$
+
+- Now how do we calculate the test statistic?
+
+## Inferential Evidence Gathering Techniques: Hypothesis Tests
+
+- The particular test we perform when we are comparing a single mean to a constant value, like we're doing here, is called a \textbf{\underline{one population t-test for the mean}}. The test statistic we calculate for this specific test is:
+
+$$ t = \frac{\bar{x} - \mu}{s/\sqrt{n}} $$
+
+- Where:
+    - $\bar{x}$ is the sample mean
+    - $\mu$ is the mean assuming $H_0$ is true
+    - $s$ is the sample standard deviation
+    - $n$ is the sample size
+    
+## Inferential Evidence Gathering Techniques: Hypothesis Tests
+
+- Fortunately for us, we don't have to calculate this by hand, we can have R do this for us by:
+
+\footnotesize
+```{r}
+tiktok |>
+  rstatix::t_test(`Daily Time`~1,alternative='greater',mu=3) |>
+  dplyr::select(statistic,p)
+```
+\normalsize
+
+## Inferential Evidence Gathering Techniques: Hypothesis Tests
+
+- Note, the p-value in this case is $2.62\times 10^{-33}$. 
+
+\vskip 0.10 in
+
+- Since $p < \alpha = 0.05$, this suggests that our data more strongly support the alternative hypothesis!
+    - Thus the research hypothesis is also supported by the data!
+    
+\vskip 0.10 in
+
+- Our conclusion would be: "In this sample, there exists evidence to suggest that the mean amount of time KSU undergraduates spend on TikTok per day may be greater than 3 hours per day."
+
+## Inferential Evidence Gathering Techniques: Effect Sizes
+
+- However, notice in the computation of the test statistic that we have a fraction in the denominator. If we do a little rearranging, we can rewrite the test statistic as:
+
+$$ t = \frac{\sqrt{n}(\bar{x} - \mu)}{s} $$
+
+- So even if $\bar{x}$ and $\mu$ are really close together, there is a value of $n$ that will make the test statistic large, and resultingly make the p-value smaller than our chosen value of $\alpha$.
+
+## Inferential Evidence Gathering Techniques: Effect Sizes
+
+- This leads us to two different types of significance:
+    1. Statistical significance (when $p < \alpha$)
+    2. Practical significance (when the difference between $\bar{x}$ and $\mu$ is meaningful to us in context)
+    
+\vskip 0.10 in
+
+- Sometimes tests give us both types of significance. Other times, we may only observe statistical significance. 
+
+\vskip 0.10 in
+
+- In general, the way we observe practical significance is by calculating metrics called "effect sizes." 
+
+## Inferential Evidence Gathering Techniques: Effect Sizes
+
+- For our case, when we're comparing a sample mean to a fixed value, the specific effect size we use is called "Cohen's d". In R:
+
+\footnotesize
+```{r}
+tiktok |>
+  rstatix::cohens_d(`Daily Time`~1,mu=3) |>
+  dplyr::select(effsize,magnitude)
+```
+\normalsize
+
+## Inferential Evidence Gathering Techniques: Effect Sizes
+
+- So our effect size, our Cohen's d, is 0.58. As we can see in the code, this is considered a "moderate" effect.
+
+\vskip 0.10 in
+
+- Our effects can be classified as "negligible," "small," "moderate," or "large." 
+
+\vskip 0.10 in
+
+- And to reiterate, this is how we quantify practical significance. A test statistic and its associated p-value are how we quantify statistical significance.
+
+## Inferential Evidence Gathering Techniques: Confidence Intervals
+
+- Now, hypothesis tests are just one inferential technique that we have available to us. The other is a method called \textbf{\underline{interval estimation}} or \textbf{\underline{confidence intervals}}.
+    - Let's walk through the logic of why we use these.
+
+\vskip 0.10 in
+
+- In our example, we are interested in knowing something about the mean amount of time spent on TikTok per day for the KSU Undergraduate \textbf{\underline{population}}.
+
+\vskip 0.10 in
+
+- Because of practical constraints, we typically can't work with every single member of a population. In our case, it probably is not feasible to ask all 39,000 undergraduate students how much time they'd estimate they spend on TikTok per day.
+    - So we took a more manageable sample of size $n=500$ instead!
+    
+## Inferential Evidence Gathering Techniques: Confidence Intervals
+
+- In our case, our sample mean of `r round(mean(tiktok$"Daily Time"),2) ` is an \textit{estimate} of the population mean, $\mu$, which we don't know.
+    - In other words, the sample mean is our best guess as to what the value of the population mean truly is.
+
+\vskip 0.10 in
+
+- Now, suppose I took another sample of a different 500 students. I'd probably get a different value for the sample mean! And if I did it a third time, then I would probably once again get a different value.
+
+\vskip 0.10 in
+
+- So in the estimation process, we have inherent variability (remember the dart board example?).
+
+## Inferential Evidence Gathering Techniques: Confidence Intervals
+
+- This is the idea with confidence intervals! Instead of saying the sample mean on its own is our best guess as to what the true value of the population mean is, we cast a wider net (or an interval) by incorporating the inherent variability that is part of estimation!
+
+\vskip 0.10 in
+
+- In general, the form of a "two-sided" (maps to a two-tailed alternative) confidence interval is:
+
+$$ \text{Sample Estimate} \pm \text{Estimation Error} $$
+
+## Inferential Evidence Gathering Techniques: Confidence Intervals
+
+- For a one-sided confidence interval, which maps to a one-tailed, upper-tailed alternative (like in our TikTok example), the general form is:
+
+$$ \text{Sample Estimate} + \text{Estimation Error} $$
+
+ - If the alternative is one-tailed and lower-tailed, the general form is:
+ 
+ $$ \text{Sample Estimate} - \text{Estimation Error} $$
+ 
+
+## Inferential Evidence Gathering Techniques: Confidence Intervals
+
+- How do we calculate this using R? First, we have to decide upon our \textit{confidence level}. 
+
+\vskip 0.10 in
+
+- A confidence level is a probability that we get to decide which tells us the degree of certainty that the interval contains the true value of the population characteristic (the mean in our case).
+
+\vskip 0.10 in
+
+- We typically choose this to be 95\%, which corresponds with $\alpha = 0.05$, but really it could be anything.
+
+\vskip 0.10 in
+
+- As you can guess, the greater the confidence level is, the wider our confidence interval is going to be and vice versa.
+
+## Inferential Evidence Gathering Techniques: Confidence Intervals
+
+- Supposing we are building a 95\% confidence interval for our one-sided, upper-sided alternative hypothesis, we could use the following code:
+
+\footnotesize
+```{r}
+tiktok |>
+  rstatix::t_test(`Daily Time`~1,alternative='greater',mu=3,
+                  conf.level=0.95,detailed=T) |>
+  dplyr::select(conf.low,conf.high)
+```
+\normalsize
+
+## Inferential Evidence Gathering Techniques: Confidence Intervals
+
+- So our interval estimate for the mean amount of time KSU Undergraduate students spend on TikTok per day is $(3.49,\space\infty)$. 
+
+\vskip 0.10 in
+
+- How do we interpret this interval? Basically, any number that is contained within that interval (so any number greater than 3.49 in this case) is a plausible or reasonable value for what the true population mean might really be!
+
+\vskip 0.10 in
+
+- Notice here that the value of 3 hours, our cutpoint in our statistical test, is not contained in the interval. This tells us the same thing as our hypothesis test:
+    - Our sample mean of 3.57 hours is meaningfully greater than the cutpoint of 3 hours, which suggests that the alternative and consequently the research hypothesis have strong support from the data.
+    
+
+

@@ -1,0 +1,32 @@
+## STAT 3125 - One Quantitative Variable Inferential Analysis Techniques ##
+
+## Step 1: Read in the data ##
+
+tiktok <- readxl::read_xlsx("TikTok Usage.xlsx")
+
+## Step 2: Specify the statistical hypotheses (if not already done so) ##
+
+## HA: Mean > 3 ##
+## H0: Mean <= 3 ##
+
+## Step 3: Perform one population t-test for mean ##
+
+tiktok |> 
+  rstatix::t_test(`Daily Time`~1,alternative='greater',mu=3) |>
+  dplyr::select(statistic,p)
+
+## Since p < 0.05, we say we have evidence in favor of HA ##
+
+## Step 4: Calcualte Effect Size ##
+
+tiktok |> 
+  rstatix::cohens_d(`Daily Time`~1,mu=3) |>
+  dplyr::select(effsize,magnitude)
+
+## Step 5: Calculate Confidence Interval ##
+
+tiktok |> 
+  rstatix::t_test(`Daily Time`~1,alternative='greater',
+                  mu=3,detailed=T) |>
+  dplyr::select(conf.low,conf.high)
+

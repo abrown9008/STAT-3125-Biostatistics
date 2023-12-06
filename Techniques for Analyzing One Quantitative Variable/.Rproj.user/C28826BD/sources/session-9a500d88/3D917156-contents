@@ -1,0 +1,52 @@
+## STAT 3125 - One Quantitative Variable Descriptive Analysis Techniques ##
+
+## Step 1: Read in the Data ##
+
+tiktok <- readxl::read_xlsx("Tiktok Usage.xlsx")
+
+## Step 2: Generate and Interpret a Histogram ##
+
+hist(tiktok$`Daily Time`,
+     main="Daily Amount of KSU Undergrads Spend on TikTok",
+     xlab="Hours Per Day",
+     ylab="Frequency")
+
+# 1. The peak is somewhere between 3 - 4.5 hours.
+# 2. The histogram is approximately bell-shaped and symmetric.
+# 3. Values range from 0.5 hours to 6.5 hours.
+# 4. There isn't anything terribly unusual about this histogram 
+# except maybe I would have expected to observe some people who use TikTok 
+# for 0 hours and some who use it for 10 or more hours per day. ##
+
+## Step 3: Calculate Sample Mean & Sample Median ##
+
+## Sample Mean ##
+
+mean(tiktok$`Daily Time`)
+
+## Sample Median ##
+
+median(tiktok$`Daily Time`)
+
+## Step 4: Calculate Measures of Variation (Range & Standard Deviation) ##
+
+## Range ##
+
+max(tiktok$`Daily Time`) - min(tiktok$`Daily Time`)
+
+## Standard Deviation ##
+
+sd(tiktok$`Daily Time`)
+
+## Step 5: Create a table containing most of the above info along with
+## quartiles ##
+
+tiktok |>
+  rstatix::get_summary_stats(`Daily Time`,type='full') |>
+  dplyr::select(variable,mean,median,sd,q1,q3)
+
+## Step 6: Create Z-Score for mean using 3 hours ##
+
+(mean(tiktok$`Daily Time`) - 3)/sd(tiktok$`Daily Time`)
+
+## The sample mean may not be terribly different from 3 hours ##
